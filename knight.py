@@ -81,7 +81,7 @@ def selection(population):
     n = len(population)
     pool = []
 
-    for i in range(0, 2 * n):
+    for i in range(0, n):
         while True:
             ind = random.choice(range(0, n))
             coef = random.choice(range(population[0][1], population[n-1][1]))
@@ -93,6 +93,25 @@ def selection(population):
         print(ind)
 
     return pool
+
+def crossover(pool):
+    n = len(pool)
+    newPop = []
+    for i in range(0,n,2):
+        indiv1 = pool[i]
+        indiv2 = pool[i+1]
+    
+        tamcadeia = len(indiv1)
+        splitPoint = random.choice(range(0,tamcadeia))
+
+        # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
+        novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
+        novoIndiv2 = indiv2[:splitPoint] + indiv1[splitPoint:]
+
+        newPop.append(novoIndiv1)
+        newPop.append(novoIndiv2)
+    
+    return newPop
 
 
 size = 8
@@ -116,3 +135,4 @@ for x in range(0, k):
     population[x][1], board, pos = fitness(population[x][0], board, pos)
 
 matingPool = selection(population)
+population = crossover(matingPool)
