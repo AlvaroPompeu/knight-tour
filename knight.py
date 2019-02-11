@@ -79,8 +79,9 @@ def fitness(indiv, board, pos):
 def selection(population):
     population.sort(key=lambda x: x[1])
     n = len(population)
+    pool = []
 
-    for i in range(0, n):
+    for i in range(0, 2 * n):
         while True:
             ind = random.choice(range(0, n))
             coef = random.choice(range(population[0][1], population[n-1][1]))
@@ -88,9 +89,11 @@ def selection(population):
             if coef < population[ind][1]:
                 break
 
-        
+        pool.append(population[ind][0])
+        print(ind)
 
-    return 0
+    return pool
+
 
 size = 8
 k = 10
