@@ -1,11 +1,11 @@
 import random
 
 
-def initialize(k):
+def initialize(k, size):
     population = []
     for i in range(0, k):
         newInd = ''
-        for j in range(0, 189):
+        for j in range(0, (size * size * 3) - 3):
             newInd += str(random.randrange(0, 2, 1))
         population.append([newInd, 0])
 
@@ -51,76 +51,7 @@ def walk(move, board, pos):
     return [board, pos, out]
 
 
-def fitness(indiv, board, pos):
-    score = 0
-
-    j = 0
-    for i in range(0, 63):
-        move = ''
-        for cont in range(0, 3):
-            move += indiv[j]
-            j += 1
-        board, pos, out = walk(move, board, pos)
-        if out:
-            score -= 5
-
-    for row in board:
-        for elem in row:
-            if elem == 1:
-                score += 1
-            elif elem == 0:
-                pass
-            else:
-                score -= 1 - elem
-
-    return [score, board, pos]
-
-
-def selection(population):
-    population.sort(key=lambda x: x[1])
-    n = len(population)
-    pool = []
-
-    for i in range(0, n):
-        while True:
-            ind = random.choice(range(0, n))
-            coef = random.choice(range(population[0][1], population[n-1][1]))
-
-            if coef < population[ind][1]:
-                break
-
-        pool.append(population[ind][0])
-        print(ind)
-
-    return pool
-
-def crossover(pool):
-    n = len(pool)
-    newPop = []
-    for i in range(0,n,2):
-        indiv1 = pool[i]
-        indiv2 = pool[i+1]
-    
-        tamcadeia = len(indiv1)
-        splitPoint = random.choice(range(0,tamcadeia))
-
-        # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
-        novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
-        novoIndiv2 = indiv2[:splitPoint] + indiv1[splitPoint:]
-
-        newPop.append(novoIndiv1)
-        newPop.append(novoIndiv2)
-    
-    return newPop
-
-
-size = 8
-k = 10
-population = initialize(k)
-random.seed(10)
-
-scores = []
-for x in range(0, k):
+def fitness(indiv, size):
     board = []
 
     for i in range(0, size):
@@ -129,10 +60,89 @@ for x in range(0, k):
             row.append(0)
         board.append(row)
 
-    pos = [3, 4]
+    pos = [0, 0]
     board[pos[0]][pos[1]] += 1
 
-    population[x][1], board, pos = fitness(population[x][0], board, pos)
+    score = 0
 
-matingPool = selection(population)
-population = crossover(matingPool)
+    j = 0
+    for i in range(0, (size * size) - 1):
+        move = ''
+        for cont in range(0, 3):
+            move += indiv[j]
+            j += 1
+        board, pos, out = walk(move, board, pos)
+        if out:
+            score -= 10
+
+    for row in board:
+        for elem in row:
+            if elem == 1:
+                score += 5
+            elif elem == 0:
+                pass
+            else:
+                score -= elem
+
+    return [score, board]
+
+
+def selection(population):
+    population.sort(key=lambda x: x[1])
+    n = len(population)
+    pool = []
+
+    for i in range(0, 2 * n):
+        while True:
+            ind = random.choice(range(0, n))
+            coef = random.choice(range(population[0][1] - 1, population[n-1][1]))
+
+            if coef < population[ind][1]:
+                break
+
+        pool.append(population[ind][0])
+
+    return pool
+
+
+def crossover(pool):
+    n = len(pool)
+    newPop = []
+    for i in range(0,n,2):
+        indiv1 = pool[i]
+        indiv2 = pool[i+1]
+
+        tamcadeia = len(indiv1)
+        splitPoint = random.choice(range(0,tamcadeia))
+
+        # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
+        novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
+        novoIndiv2 = indiv2[:splitPoint] + indiv1[splitPoint:]
+
+        newPop.append([novoIndiv1, 0])
+        #newPop.append([novoIndiv2, 0])
+
+    return newPop
+
+
+size = 4
+k = 1000
+numIt = 1000
+population = initialize(k, size)
+
+
+for it in range(0, numIt):
+    print("GENERATION " + str(it))
+
+    for x in range(0, k):
+        population[x][1], board = fitness(population[x][0], size)
+
+    matingPool = selection(population)
+
+    population.sort(key=lambda x: x[1], reverse=True)
+    print('BEST GUY: ' + str(population[0][1]))
+    _, board = fitness(population[0][0], size)
+    for row in board:
+        print(row)
+
+    population = crossover(matingPool)
