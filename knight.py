@@ -111,11 +111,14 @@ def crossover(pool):
         indiv1 = pool[i]
         indiv2 = pool[i+1]
 
-        tamcadeia = len(indiv1)
-        splitPoint = random.choice(range(0,tamcadeia))
+        if(100 * random.random() < crossoverRate):
+            tamcadeia = len(indiv1)
+            splitPoint = random.choice(range(0,tamcadeia))
 
-        # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
-        novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
+            # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
+            novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
+        else:
+            novoIndiv1 = indiv1
 
         #FAZENDO A MUTAÇÃO
         if(100 * random.random() < mutationRate):
@@ -132,8 +135,9 @@ def crossover(pool):
 
     return newPop
 
-mutationRate = 30
-size = 6
+mutationRate = 5
+crossoverRate = 85
+size = 8
 k = 1000
 numIt = 1000
 population = initialize(k, size)
