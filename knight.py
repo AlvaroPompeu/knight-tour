@@ -104,7 +104,7 @@ def selection(population):
 
     return pool
 
-def crossover(pool):
+def crossover(pool, maxMutations):
     n = len(pool)
     newPop = []
     for i in range(0,n,2):
@@ -115,14 +115,13 @@ def crossover(pool):
             tamcadeia = len(indiv1)
             splitPoint = random.choice(range(0,tamcadeia))
 
-            # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
             novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
         else:
             novoIndiv1 = indiv1
 
         #FAZENDO A MUTAÇÃO
         if(100 * random.random() < mutationRate):
-            numMutations = random.choice(range(1,size))
+            numMutations = random.choice(range(1,maxMutations+1))
             for j in range(0,numMutations):
                 x = random.choice(range(0,len(indiv1)))
                 if novoIndiv1[x] == '0':
@@ -131,13 +130,14 @@ def crossover(pool):
                     novoIndiv1 = novoIndiv1[:x] + '0' + novoIndiv1[x+1:]
 
         newPop.append([novoIndiv1, 0])
-        #newPop.append([novoIndiv2, 0])
 
     return newPop
 
-mutationRate = 5
-crossoverRate = 85
-size = 8
+
+mutationRate = 2
+crossoverRate = 100
+size = 6
+maxMutations = 1
 k = 1000
 numIt = 1000
 population = initialize(k, size)
@@ -157,4 +157,4 @@ for it in range(0, numIt):
     for row in board:
         print(row)
 
-    population = crossover(matingPool)
+    population = crossover(matingPool, maxMutations)
