@@ -104,7 +104,6 @@ def selection(population):
 
     return pool
 
-
 def crossover(pool):
     n = len(pool)
     newPop = []
@@ -117,15 +116,24 @@ def crossover(pool):
 
         # Gerando dois indivíduos MUDAR SE FICAR BOSTA QUE NEM O ALVARO LIXO
         novoIndiv1 = indiv1[:splitPoint] + indiv2[splitPoint:]
-        novoIndiv2 = indiv2[:splitPoint] + indiv1[splitPoint:]
+
+        #FAZENDO A MUTAÇÃO
+        if(100 * random.random() < mutationRate):
+            numMutations = random.choice(range(1,size))
+            for j in range(0,numMutations):
+                x = random.choice(range(0,len(indiv1)))
+                if novoIndiv1[x] == '0':
+                    novoIndiv1 = novoIndiv1[:x] + '1' + novoIndiv1[x+1:]
+                else:
+                    novoIndiv1 = novoIndiv1[:x] + '0' + novoIndiv1[x+1:]
 
         newPop.append([novoIndiv1, 0])
         #newPop.append([novoIndiv2, 0])
 
     return newPop
 
-
-size = 4
+mutationRate = 30
+size = 6
 k = 1000
 numIt = 1000
 population = initialize(k, size)
